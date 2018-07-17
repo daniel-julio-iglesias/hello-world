@@ -1,10 +1,11 @@
 # hello-world
 Totally Initial Repository
-A littel bit about myself, hmmm!
+A little bit about myself, hmmm!
 Python fun
-Like Flask
+Like Flask webframework
 Oriented to Machine Learning features
-Plan? Yes, Artificial Intelligence to replace human decissions in repeated patterns
+Plan? Yes, Artificial Intelligence to replace human decissions
+in artificial activities with repeated patterns
 to avoid avoidable mistakes.
 Now, using Python ... TODO
 -- Make a classification tool
