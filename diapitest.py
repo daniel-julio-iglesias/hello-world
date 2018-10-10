@@ -8,7 +8,7 @@ import requests
 
 # proxies = {
 #     'http': 'http://username:password@Proxyadresse:Proxyport',
-#     'https': 'http://username:password@Proxyadresse:Proxyport',
+#     'https': 'https://username:password@Proxyadresse:Proxyport',
 # }
 
 
