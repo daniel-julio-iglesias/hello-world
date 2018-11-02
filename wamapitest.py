@@ -160,6 +160,46 @@ messageNbr Message Number within Oracle Utilities Application Framework
 callSequence Delimited sequence of programs called.
 messageText Fully qualified error message from Oracle Utilities Application Framework in CDATA format
 longDescription The long message description from the Oracle Utilities Application Framework in CDATA format
+
+
+-----------------------------
+Inbound REST Web Services
+
+There is some configuration that is specific to inbound REST web services:
+
+    - Each Inbound REST Web Service must reference a resource category. This category is used to
+    associate the web service with a 'resource' (a common term used for RESTful services).
+    For multiple IWS records linked to the same resource category, external catalogues can use
+    this information to group together related web services.
+
+    - Each operation must define the HTTP Method and a Resource URI. This information along with
+    the IWS name is used to compose the URI for this RESTful web service. The resource URI
+    must begin with a slash ('/'). In this release only the HTTP Method of POST is supported.
+
+    - For operations that reference a business object, the transaction type must be provided.
+    The REST syntax doesn't support defining the transaction type at runtime.
+
+    Note: Using the transaction type Change requires all values to be passed in. Using the
+    transaction type Update allows the web service to pass only the primary key and the values
+    to be updated. All other elements will retain their existing values.
+
+Configuring REST Inbound Web Service Options
+
+This topics in this section describes the configuration needed for using inbound REST web services.
+
+Resource Category Lookup
+
+Refer to Inbound REST Web Service for an overview of REST IWS functionality.
+
+Each Inbound REST Web Service is associated with a Resource Category. The categories are defined
+as an extendable lookup.
+
+Navigate to the Extendable Lookup portal. Search for and select the Resource Category business
+object. Define values as needed. Typically the category is related to an entity, or maintenance
+object, referred to as a 'resource' in REST nomenclature. In some cases, an edge application
+may have already delivered appropriate resource categories for your use.
+
+Refer to the embedded help for more information about configuring this object.
 """
 
 from config import Config
@@ -167,29 +207,85 @@ import json
 import requests
 
 
-# proxies = {
-#     'http': 'http://username:password@Proxyadresse:Proxyport',
-#     'https': 'https://username:password@Proxyadresse:Proxyport',
-# }
+proxies = {
+    'http': 'http://username:password@Proxyadresse:Proxyport',
+    'https': 'https://username:password@Proxyadresse:Proxyport',
+}
 
 
 class APITest:
     def __init__(self, api_key=None):
         self.api_key = api_key
-        self.base_uri = 'http://httpbin.org'
+        # self.base_uri = 'http://httpbin.org'
+        self.base_uri = 'https://appserver:port/ouaf/cis.jsp'
+
+    def login(self):
+        uri = 'https:/appserver:port/ouaf/j_security_check?j_username=username&j_password=password'
+        r = requests.post(uri, proxies=proxies, verify=False)
+        # return r.json()
+        return r.text
+        # return r.encoding
+        # return r.status_code
+        # return r.headers
+        # return r
+
+    def get_token(self):
+        # uri = self.base_uri + '/get'
+        # uri = self.base_uri + '/testmds'
+        # print(uri)
+        # r = requests.get(uri)
+
+        """
+         Adding certificate verification is strongly advised.
+        """
+
+        # r = requests.post('https://appserver:port/ouaf/restSecurityToken',
+        #                   proxies=proxies, auth=('username', 'password'), verify=False)
+
+        r = requests.post('https://appserver:port/ouaf/restSecurityToken',
+                          proxies=proxies, auth=('username', 'password'), verify=False)
+
+        # r = requests.post('https://appserver:port/ouaf/restSecurityToken',
+        #                  auth=('username', 'password'), verify=False)
+
+        # return r.json()
+        return r.text
+        # return r
 
     def get(self):
-        uri = self.base_uri + '/get'
+        # uri = self.base_uri + '/get'
+        uri = self.base_uri + '/testmds'
         print(uri)
-        r = requests.get(self.base_uri + '/get')
-        # r = requests.get(self.base_uri + '/get', proxies=proxies)
+        # r = requests.get(uri)
+        r = requests.get(uri, proxies=proxies)
         return r.json()
+
+    def post(self):
+        # uri = self.base_uri + '/get'
+        # uri = self.base_uri + '/testmds'
+        # uri = 'https://appserver:port/ouaf/rest/ouaf/busObj/W1-TrackedSpecificationRoot/testmds'
+        # uri = 'https://appserver:port/ouaf/resources/ouaf/busObj/W1-TrackedSpecificationRoot/testmds'
+        # uri = 'https://appserver:port/ouaf/resources/ouaf/script/WM-WAMREST/hello'
+        uri = 'https://appserver:port/ouaf/rest/ouaf/script/WM-WAMREST/hello'
+        # print(uri)
+        # r = requests.get(uri)
+        # r = requests.post(uri, proxies=proxies)
+        r = requests.post(uri, proxies=proxies, auth=('username', 'password'), verify=False)
+        # return r.json()
+        # return r.text
+        # return r.encoding
+        # return r.status_code
+        return r.headers
+        # return r
 
 
 def main():
     # print("Hello World!")
     api_test = APITest()
-    print(api_test.get())
+    print(api_test.login())
+    # print(api_test.get_token())
+    # print(api_test.get())
+    # print(api_test.post())
 
     # r = requests.get('http://httpbin.org/get', proxies=proxies)
     # print(r)
